@@ -7,6 +7,9 @@
 [![Pandas](https://img.shields.io/badge/Pandas-2.x-150458.svg?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
 [![Seaborn](https://img.shields.io/badge/Seaborn-0.13+-4C72B0.svg)](https://seaborn.pydata.org/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![GitHub Stars](https://img.shields.io/github/stars/prachizala/attendance-data-analytics?style=social)](https://github.com/prachizala/attendance-data-analytics/stargazers)
+
+> ⭐ **If you find this workforce analytics case study or the Streamlit simulator helpful, please consider starring this repository!**
 
 An end-to-end data analytics and workforce intelligence case study examining **90 days of employee attendance, punctuality dynamics, commute friction, and day-of-week behavioral patterns across 50 employees and 3,550 recorded shifts**. 
 
