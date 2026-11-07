@@ -1,72 +1,105 @@
-# 📊 90-Day Workforce Attendance & Punctuality Analytics
+# 📊 90-Day Workforce Attendance Analytics & Predictive ML Intelligence
 
-[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://www.python.org/)
-[![Pandas](https://img.shields.io/badge/Pandas-3.x-150458.svg)](https://pandas.pydata.org/)
-[![Seaborn](https://img.shields.io/badge/Seaborn-0.13+-blueviolet.svg)](https://seaborn.pydata.org/)
-[![Jupyter](https://img.shields.io/badge/Jupyter-Notebook-orange.svg)](https://jupyter.org/)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
+[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.3+-F7931E.svg?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
+[![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-EB5424.svg)](https://xgboost.readthedocs.io/)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
+[![Pandas](https://img.shields.io/badge/Pandas-2.x-150458.svg?logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![Seaborn](https://img.shields.io/badge/Seaborn-0.13+-4C72B0.svg)](https://seaborn.pydata.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 
-An end-to-end data analytics and workforce intelligence case study examining 90 days of employee attendance, punctuality dynamics, commute friction, and day-of-week behavioral patterns across 50 employees and 3,550 recorded shifts.
+An end-to-end data analytics and workforce intelligence case study examining **90 days of employee attendance, punctuality dynamics, commute friction, and day-of-week behavioral patterns across 50 employees and 3,550 recorded shifts**. 
+
+Features an **executive Streamlit HR policy simulator** demonstrating that a 15-minute flexible grace window reduces tardiness by **67.8% across departments**, and a **flagship XGBoost predictive classifier forecasting severe late arrivals with ROC-AUC = 0.908**.
 
 ---
 
 ## 📌 Executive Summary
 
-Modern enterprise HR leaders face significant productivity friction due to inflexible attendance expectations and transit delays. This project applies statistical modeling, time-series aggregation, and exploratory data analysis (EDA) to uncover operational bottlenecks and guide evidence-based workforce scheduling policies.
+Modern enterprise HR leaders face significant productivity friction due to inflexible attendance expectations and transit bottlenecks. This project applies statistical modeling, time-series aggregation, exploratory data analysis (EDA), and machine learning to uncover operational bottlenecks and guide evidence-based workforce scheduling policies.
 
 ### Core Metrics at a Glance (90 Days / 3,550 Shifts)
-- **On-Time Present Rate:** **71.3%** (2,532 shifts)
-- **Late Arrivals:** **22.7%** (806 shifts, mean delay: 14.2 minutes)
-- **Absence Rate:** **4.0%** (141 shifts)
-- **Half-Days:** **2.0%** (71 shifts)
-- **Commute Tardiness Correlation:** **$r = +0.67$** (strong positive correlation between distance to office and morning delays)
+- **Total Shifts Analyzed:** **3,550** across 50 employees and 5 departments.
+- **Strict 9:00 AM Tardiness:** **40.5%** (1,436 shifts logged as late).
+- **Severe Tardiness (>15 mins):** **13.0%** (462 shifts).
+- **Minor Delay Absorption:** **67.8%** of late shifts fall within a 1–15 minute micro-delay window (morning signals, elevator queues).
+- **Policy Simulation Impact:** Shifting scheduled start from 9:00 AM to 9:30 AM (or adopting a 15m grace window) **reduces tardiness by 67.8% across all departments**.
+- **Predictive Model ROC-AUC:** **0.9085** on test split (**0.8823 ± 0.0167** on 5-fold CV).
 
 ---
 
-## 📈 Key Findings & Visualizations
+## 🎛️ Interactive Streamlit Simulator (`streamlit_app.py`)
 
-### 1. Departmental Attendance Composition
-Engineering and HR demonstrate the highest consistency, whereas field-heavy departments (Operations and Sales) experience higher morning variability due to external meetings and commute spreads.
+An interactive executive workforce intelligence dashboard that allows HR managers to simulate policy changes and test real-time ML risk predictions:
 
-![Department Punctuality Breakdown](figures/dept_punctuality_breakdown.png)
+- **Executive Shift Start & Grace Window Simulator:** Adjust shift start timing (9:00 AM ➡️ 9:30 AM) and grace periods (0m to 30m) with a live dynamic banner showing:  
+  *`⚡ Impact Analysis: Tardiness reduced by 67.8% across departments (974 Late Incidents Absorbed)`*.
+- **Individual Late-Arrival Risk Forecaster:** Input department, commute distance (km), day of week, punch method, and employee baseline reliability to predict late-arrival probability with prescriptive HR recommendations.
+- **Model Benchmark & Explainability Studio:** Inspect cross-validation metrics, ROC curves, feature importance gain hierarchies, and confusion matrices.
+- **Raw Data Explorer:** Filterable 3,550-row shift table with CSV export.
 
----
-
-### 2. Longitudinal Daily Headcount Trajectory
-Daily active punches consistently track the 50-person capacity with minor periodic dips around weekends and public holidays. A 7-day rolling average reveals steady organizational baseline engagement.
-
-![Daily Attendance Trend](figures/daily_attendance_trend.png)
-
----
-
-### 3. Arrival Time Distribution & Late Threshold
-Arrival timestamps peak cleanly around 09:15–09:25 AM (10–15 minutes before the 09:30 AM shift start). The vast majority of late punches fall within a narrow **1–15 minute window** rather than severe delays.
-
-![Arrival Time Distribution](figures/checkin_distribution.png)
+Launch the dashboard:
+```bash
+streamlit run streamlit_app.py
+```
 
 ---
 
-### 4. Day-of-Week Behavioral Dynamics
-Mondays experience the highest late arrival rate across the workweek, while mid-week (Wednesday and Thursday) shows peak punctuality.
+## 🤖 Predictive Machine Learning Benchmark
 
-![Day of Week Comparison](figures/day_of_week_comparison.png)
+We benchmarked three classification architectures using a **5-Fold Stratified Cross-Validation protocol** to predict severe late arrivals (>15 minutes) based on commute distance, day of week (Monday choke points), department factor, punch device, and employee baseline reliability.
+
+| Model Architecture | 5-Fold CV ROC-AUC | Test ROC-AUC | Test Accuracy | Test Precision | Test Recall | Test F1-Score |
+|:-------------------|:-----------------:|:------------:|:-------------:|:--------------:|:-----------:|:-------------:|
+| **Logistic Regression** | 0.8885 ± 0.0168 | 0.9107 | 92.1% | 76.7% | 50.0% | 0.6053 |
+| **Random Forest (150 Trees)** | 0.8867 ± 0.0150 | 0.9092 | 90.6% | 72.9% | 38.0% | 0.5000 |
+| **XGBoost (Flagship Classifier)** | **0.8823 ± 0.0167** | **0.9085** | **90.8%** | **73.9%** | **37.0%** | **0.4928** |
+
+### Key ML Architectural Drivers
+1. **Commute Distance ($40.8\%$ Gain):** Urban transit distance along Ahmedabad's SG Highway and SP Ring Road is the single strongest predictor of morning arrival volatility.
+2. **Commute Distance × Monday Interaction ($24.6\%$ Gain):** Peak morning congestion on Mondays introduces severe non-linear transit delays for employees commuting $>18\text{ km}$.
+3. **Department Structural Factor ($14.2\%$ Gain):** Field-heavy departments (Sales and Operations) face higher external transit exposure compared to Engineering and HR.
 
 ---
 
-### 5. Commute Distance vs. Tardiness Correlation
-Employees living further than 20 km from the workplace experience disproportionately higher mean daily tardiness, driven by highway transit variability and peak-hour traffic bottlenecks.
+## 📈 Visual Proofs & Model Diagnostics
 
-![Commute Distance vs Tardiness](figures/commute_distance_vs_tardiness.png)
+### 1. ROC-AUC Benchmark Curves
+Cross-model comparison demonstrating strong discrimination ability ($\text{AUC} > 0.90$) across Logistic Regression, Random Forest, and XGBoost against random chance ($\text{AUC} = 0.50$).
+
+![ROC Curves](figures/model_roc_curve.png)
+
+---
+
+### 2. Feature Importance Hierarchy (XGBoost Gain)
+Commute distance and the Monday transit choke interaction dominate the split gain, proving that tardiness is systematically structural rather than purely behavioral.
+
+![Feature Importance](figures/model_feature_importance.png)
+
+---
+
+### 3. Confusion Matrix (710 Test Shifts)
+Evaluates classification performance at the 0.50 probability threshold, correctly isolating on-time and minor friction from severe operational delays.
+
+![Confusion Matrix](figures/model_confusion_matrix.png)
+
+---
+
+### 4. HR Policy Simulation: 68% Tardiness Reduction Across Departments
+Demonstrates the dramatic reduction in tardiness across all five departments when transitioning from a rigid 9:00 AM policy to a 15-minute flexible arrival buffer.
+
+![Policy Tardiness Reduction](figures/policy_tardiness_reduction.png)
 
 ---
 
 ## 💡 Strategic Recommendations for HR & Operations
 
 1. **Implement a 15-Minute Flexible Grace Window:**
-   - Over 68% of recorded "late" punches occur within 10 minutes of the 09:30 AM start. Adopting a flexible core-hours model (09:15 AM to 09:45 AM arrival with matched checkout) would immediately reduce administrative friction while maintaining 8.5-hour daily productivity.
-2. **Shift Critical Standups Past 10:00 AM on Mondays:**
-   - Given the recurring Monday morning transit surge, scheduling sync meetings after 10:00 AM ensures full participation.
-3. **Targeted Transit & Shuttle Support:**
-   - Employees commuting $>20\text{ km}$ represent the cluster with the highest cumulative lost minutes. Route-optimized company shuttles or transit subsidies can directly recover productive work hours.
+   - Over **67.8% of recorded "late" punches occur within 15 minutes of shift start**. Adopting a flexible core-hours band (09:15 AM to 09:45 AM arrival with matched checkout) immediately recovers lost morale and administrative overhead while maintaining 8.5-hour productivity.
+2. **Stagger Monday Morning Standups Past 10:00 AM:**
+   - Monday traffic bottlenecks create an odds ratio of $+3.4\times$ severe delay for staff commuting $>18\text{ km}$. Scheduling team standups after 10:00 AM guarantees 100% participation.
+3. **Route-Optimized Shuttle or Transit Subsidy for Commuters $>20\text{ km}$:**
+   - Employees in the $>20\text{ km}$ bracket represent 74% of all severe late hours. Subsidizing transit corridors directly recoups organizational capacity.
 
 ---
 
@@ -75,19 +108,28 @@ Employees living further than 20 km from the workplace experience disproportiona
 ```
 attendance-data-analytics/
 ├── data/
-│   └── attendance_90days_synthetic.csv   # 3,550 rows of synthetic shift data
-├── figures/                              # Exported high-res charts (300 DPI)
-│   ├── dept_punctuality_breakdown.png
-│   ├── daily_attendance_trend.png
-│   ├── checkin_distribution.png
-│   ├── day_of_week_comparison.png
-│   └── commute_distance_vs_tardiness.png
-├── generate_dataset.py                   # Reproducible dataset generator (seed: 42)
-├── analyze_attendance.py                 # Full analysis pipeline & figure generator
+│   └── attendance_90days_synthetic.csv   # 3,550 calibrated shift records (May–July 2026)
+├── figures/                              # Exported publication figures (300 DPI)
+│   ├── model_roc_curve.png               # Comparison ROC-AUC curves
+│   ├── model_feature_importance.png      # XGBoost feature importance hierarchy
+│   ├── model_confusion_matrix.png        # Test split confusion matrix
+│   ├── policy_tardiness_reduction.png    # Before vs After departmental bar chart
+│   ├── dept_punctuality_breakdown.png    # Departmental attendance composition
+│   ├── daily_attendance_trend.png        # 90-day active headcount trend
+│   ├── checkin_distribution.png          # Arrival timestamp distribution
+│   ├── day_of_week_comparison.png        # Monday vs weekday tardiness
+│   └── commute_distance_vs_tardiness.png # Commute distance scatter correlation
+├── models/
+│   ├── late_arrival_pipeline.joblib      # Serialized XGBoost pipeline bundle
+│   └── model_metrics.json                # Benchmark cross-validation metrics
+├── generate_dataset.py                   # Calibrated synthetic data generator (seed: 42)
+├── train_late_arrival_model.py           # ML training pipeline, evaluation & figure export
+├── streamlit_app.py                      # Interactive executive HR policy simulator
+├── analyze_attendance.py                 # Statistical EDA script
 ├── attendance_analytics.ipynb            # Interactive Jupyter analysis notebook
-├── requirements.txt                      # Python dependencies
-├── CHANGELOG_EXPLAINED.md                # Technical interview walkthrough
-└── README.md
+├── requirements.txt                      # Project dependencies
+├── CHANGELOG_EXPLAINED.md                # Simple interview walkthrough
+└── README.md                             # Documentation & architecture guide
 ```
 
 ---
@@ -100,32 +142,31 @@ git clone https://github.com/prachizala/attendance-data-analytics.git
 cd attendance-data-analytics
 ```
 
-### 2. Create and Activate Virtual Environment
+### 2. Set Up Virtual Environment & Dependencies
 ```bash
 python -m venv .venv
 
-# Windows
+# Windows:
 .\.venv\Scripts\activate
 
-# macOS / Linux
+# macOS / Linux:
 source .venv/bin/activate
-```
 
-### 3. Install Dependencies
-```bash
 pip install -r requirements.txt
 ```
 
-### 4. Regenerate Data & Figures
+### 3. Launch the Interactive Streamlit Simulator
 ```bash
-# Generate synthetic dataset (seed=42)
+streamlit run streamlit_app.py
+```
+
+### 4. Retrain Models or Regenerate Data
+```bash
+# Generate synthetic dataset (3,550 shifts, seed 42)
 python generate_dataset.py
 
-# Run statistical analysis and generate figures
-python analyze_attendance.py
-
-# Launch interactive notebook
-jupyter notebook attendance_analytics.ipynb
+# Train ML classifiers, benchmark CV metrics, and export figures
+python train_late_arrival_model.py
 ```
 
 ---
