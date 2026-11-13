@@ -24,3 +24,11 @@ This document highlights the collaborative engineering and research methodologie
 3. **Reproducibility & Open Science:**
    * Standardized Python 3.11 environment configuration and pinned dependencies for zero-drift interactive simulations.
    * Ensured headless execution compatibility for automated CI pipelines and Streamlit Cloud deployment.
+
+
+---
+
+## 🔬 Reproducibility & Audit Verification
+
+* **Random Seed Protocol:** All stochastic components in model training and cross-validation splits use `random_state=42` to guarantee exact deterministic reproduction across independent test runs.
+* **Environment Synchronization:** Validated under headless Linux CI runners and local Python 3.11 environments with zero dependency mismatch.
