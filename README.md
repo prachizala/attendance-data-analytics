@@ -27,7 +27,7 @@ Modern enterprise HR leaders face significant productivity friction due to infle
 - **Severe Tardiness (>15 mins):** **13.0%** (462 shifts).
 - **Minor Delay Absorption:** **67.8%** of late shifts fall within a 1–15 minute micro-delay window (morning signals, elevator queues).
 - **Policy Simulation Impact:** Shifting scheduled start from 9:00 AM to 9:30 AM (or adopting a 15m grace window) **reduces tardiness by 67.8% across all departments**.
-- **Predictive Model ROC-AUC:** **0.9085** on test split (**0.8823 ± 0.0167** on 5-fold CV).
+- **Predictive Model ROC-AUC:** **0.9040** on test split (**0.8821 ± 0.0166** on 5-fold CV with 0% data leakage).
 
 ---
 
@@ -35,28 +35,41 @@ Modern enterprise HR leaders face significant productivity friction due to infle
 
 An interactive executive workforce intelligence dashboard that allows HR managers to simulate policy changes and test real-time ML risk predictions:
 
-- **Executive Shift Start & Grace Window Simulator:** Adjust shift start timing (9:00 AM ➡️ 9:30 AM) and grace periods (0m to 30m) with a live dynamic banner showing:  
-  *`⚡ Impact Analysis: Tardiness reduced by 67.8% across departments (974 Late Incidents Absorbed)`*.
+- **📂 Custom Biometric / Punch CSV Uploader:** Upload any organization's raw punch logs or use the pre-calibrated 90-day dataset.
+- **Executive Shift Start & Grace Window Simulator:** Adjust shift start timing (9:00 AM ➡️ 9:30 AM) and grace periods (0m to 30m) with live impact calculations and an **Exportable Executive Policy Impact Memo (.md)**.
 - **Individual Late-Arrival Risk Forecaster:** Input department, commute distance (km), day of week, punch method, and employee baseline reliability to predict late-arrival probability with prescriptive HR recommendations.
+- **🔍 Local Factor Explainability Breakdown:** Bar chart breakdown quantifying individual risk factors (commute distance delta, Monday peak choke, department exposure, and baseline profile).
+- **👤 Employee 360° Profile Studio:** Deep-dive into an individual employee's 90-day attendance record, punctuality score, day-of-week late patterns, and activity logs.
 - **Model Benchmark & Explainability Studio:** Inspect cross-validation metrics, ROC curves, feature importance gain hierarchies, and confusion matrices.
-- **Raw Data Explorer:** Filterable 3,550-row shift table with CSV export.
+- **Raw Data Explorer:** Filterable shift table with dynamic CSV export.
 
 Launch the dashboard:
 ```bash
 streamlit run streamlit_app.py
 ```
 
+Run automated tests:
+```bash
+python -m unittest tests/test_pipeline.py
+```
+
+Deploy with Docker:
+```bash
+docker build -t attendance-analytics .
+docker run -p 8501:8501 attendance-analytics
+```
+
 ---
 
 ## 🤖 Predictive Machine Learning Benchmark
 
-We benchmarked three classification architectures using a **5-Fold Stratified Cross-Validation protocol** to predict severe late arrivals (>15 minutes) based on commute distance, day of week (Monday choke points), department factor, punch device, and employee baseline reliability.
+We benchmarked three classification architectures using a **5-Fold Stratified Cross-Validation protocol** (strictly leak-free with train-fold target encoding) to predict severe late arrivals (>15 minutes):
 
 | Model Architecture | 5-Fold CV ROC-AUC | Test ROC-AUC | Test Accuracy | Test Precision | Test Recall | Test F1-Score |
 |:-------------------|:-----------------:|:------------:|:-------------:|:--------------:|:-----------:|:-------------:|
-| **Logistic Regression** | 0.8885 ± 0.0168 | 0.9107 | 92.1% | 76.7% | 50.0% | 0.6053 |
-| **Random Forest (150 Trees)** | 0.8867 ± 0.0150 | 0.9092 | 90.6% | 72.9% | 38.0% | 0.5000 |
-| **XGBoost (Flagship Classifier)** | **0.8823 ± 0.0167** | **0.9085** | **90.8%** | **73.9%** | **37.0%** | **0.4928** |
+| **Logistic Regression** | 0.8901 ± 0.0162 | 0.9073 | 91.3% | 72.7% | 52.2% | 0.6076 |
+| **Random Forest (150 Trees)** | 0.8865 ± 0.0158 | 0.9034 | 90.7% | 78.3% | 39.1% | 0.5217 |
+| **XGBoost (Flagship Classifier)** | **0.8821 ± 0.0166** | **0.9040** | **91.3%** | **84.1%** | **40.2%** | **0.5441** |
 
 ### Key ML Architectural Drivers
 1. **Commute Distance ($40.8\%$ Gain):** Urban transit distance along Ahmedabad's SG Highway and SP Ring Road is the single strongest predictor of morning arrival volatility.

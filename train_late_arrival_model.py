@@ -56,6 +56,19 @@ def load_and_preprocess_data(csv_path):
     }
     df["dept_code"] = df["department"].map(dept_map)
 
+    # Train / test split by index first to avoid data leakage
+    train_idx, test_idx = train_test_split(
+        df.index, test_size=0.20, random_state=SEED, stratify=df["is_severe_late"]
+    )
+
+    # Compute historical employee late rate strictly on train fold (prevents data leakage)
+    train_sub = df.loc[train_idx]
+    global_late_rate = float(train_sub["is_severe_late"].mean())
+    emp_rates = train_sub.groupby("employee_id")["is_severe_late"].mean().to_dict()
+
+    # Map historical rate with global train mean fallback for unseen/test records
+    df["emp_hist_late_rate"] = df["employee_id"].map(emp_rates).fillna(global_late_rate)
+
     feature_cols = [
         "commute_dist_km",
         "is_monday",
@@ -69,12 +82,13 @@ def load_and_preprocess_data(csv_path):
     X = df[feature_cols].copy()
     y = df["is_severe_late"].copy()
 
-    return df, X, y, feature_cols, dept_map, emp_rates
+    return df, X, y, feature_cols, dept_map, emp_rates, global_late_rate, train_idx, test_idx
 
-def train_and_evaluate(X, y, feature_cols):
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.20, random_state=SEED, stratify=y
-    )
+def train_and_evaluate(X, y, feature_cols, train_idx, test_idx):
+    X_train = X.loc[train_idx]
+    X_test = X.loc[test_idx]
+    y_train = y.loc[train_idx]
+    y_test = y.loc[test_idx]
 
     print(f"Training set: {len(X_train)} shifts | Test set: {len(X_test)} shifts")
     print(f"Base Severe Tardiness Rate: {y.mean() * 100:.1f}%\n")
@@ -246,8 +260,8 @@ def main():
     os.makedirs(model_dir, exist_ok=True)
     os.makedirs(fig_dir, exist_ok=True)
 
-    df, X, y, feature_cols, dept_map, emp_rates = load_and_preprocess_data(data_path)
-    models, metrics, curves_data, X_test, y_test, best_model = train_and_evaluate(X, y, feature_cols)
+    df, X, y, feature_cols, dept_map, emp_rates, global_late_rate, train_idx, test_idx = load_and_preprocess_data(data_path)
+    models, metrics, curves_data, X_test, y_test, best_model = train_and_evaluate(X, y, feature_cols, train_idx, test_idx)
 
     # Save model pipeline bundle
     bundle = {
@@ -255,6 +269,7 @@ def main():
         "feature_cols": feature_cols,
         "dept_map": dept_map,
         "emp_rates": emp_rates,
+        "global_late_rate": global_late_rate,
         "metrics": metrics["XGBoost (Flagship)"]
     }
     model_out = os.path.join(model_dir, "late_arrival_pipeline.joblib")
