@@ -1,5 +1,6 @@
 # 📊 90-Day Workforce Attendance Analytics & Predictive ML Intelligence
 
+[![CI](https://github.com/prachizala/attendance-data-analytics/actions/workflows/ci.yml/badge.svg)](https://github.com/prachizala/attendance-data-analytics/actions)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB.svg?logo=python&logoColor=white)](https://www.python.org/)
 [![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.3+-F7931E.svg?logo=scikitlearn&logoColor=white)](https://scikit-learn.org/)
 [![XGBoost](https://img.shields.io/badge/XGBoost-2.0+-EB5424.svg)](https://xgboost.readthedocs.io/)
@@ -171,12 +172,17 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-### 3. Launch the Interactive Streamlit Simulator
+### 3. Run Automated Tests
+```bash
+python -m unittest tests/test_pipeline.py
+```
+
+### 4. Launch the Interactive Streamlit Simulator
 ```bash
 streamlit run streamlit_app.py
 ```
 
-### 4. Retrain Models or Regenerate Data
+### 5. Retrain Models or Regenerate Data
 ```bash
 # Generate synthetic dataset (3,550 shifts, seed 42)
 python generate_dataset.py
@@ -184,6 +190,21 @@ python generate_dataset.py
 # Train ML classifiers, benchmark CV metrics, and export figures
 python train_late_arrival_model.py
 ```
+
+---
+
+## ⚙️ Environment & Technical Specifications
+
+| Parameter | Specification | Details |
+|:---|:---|:---|
+| **Python Runtime** | Python 3.10 / 3.11 | Validated on Python 3.10 & 3.11 |
+| **Operating Systems** | Windows 10/11, macOS, Ubuntu 22.04+ | Cross-platform compatible |
+| **Primary Frameworks** | Streamlit 1.30+, Scikit-Learn 1.3+, XGBoost 2.0+ | Machine learning & web dashboard |
+| **Data Processing** | Pandas 2.x, NumPy 1.24+ | Vectorized tabular operations |
+| **Visualizations** | Matplotlib 3.7+, Seaborn 0.12+, Altair 5.0+ | Static & interactive charting |
+| **Testing Framework** | `unittest` (Standard Library) | Automated test suite in `tests/` |
+| **CI/CD** | GitHub Actions | Automated build & test matrix on Python 3.10 & 3.11 |
+| **Containerization** | Docker (Python 3.11-slim) | Standalone deployment on port 8501 |
 
 ---
 
